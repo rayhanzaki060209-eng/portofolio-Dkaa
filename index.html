@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Andika | Portofolio TJKT & Store</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,600;1,400&display=swap');
+
+        :root {
+            --bg-dark: #0a0d0b;
+            --bg-card: #121815;
+            --celtic-green: #143623;
+            --celtic-light: #205c3b;
+            --gold-accent: #c4a25c;
+            --text-main: #e2e8e4;
+            --text-muted: #8c9c93;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-snap-type: y mandatory;
+        }
+
+        body {
+            background: radial-gradient(circle at top right, var(--celtic-green), var(--bg-dark) 60%);
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* --- PRELOADER --- */
+        #intro-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            background: #050706; z-index: 99999; display: flex;
+            justify-content: center; align-items: center;
+            transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+        .intro-hidden { transform: translateY(-100%); }
+        .intro-clover { font-size: 7rem; color: var(--celtic-light); filter: drop-shadow(0 0 25px rgba(32, 92, 59, 1)); animation: pulseClover 1.5s infinite ease-in-out; }
+        @keyframes pulseClover { 0% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.15) rotate(15deg); } 100% { transform: scale(1) rotate(0deg); } }
+
+        /* --- DAUN TERBANG --- */
+        #clover-particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        .flying-leaf { position: absolute; bottom: -50px; color: rgba(32, 92, 59, 0.25); font-size: 1.5rem; animation: sweepUp linear forwards; }
+        @keyframes sweepUp { 0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { transform: translateY(-110vh) translateX(150px) rotate(360deg); opacity: 0; } }
+
+        .main-wrapper { position: relative; z-index: 10; }
+
+        /* --- REVEAL SCROLL --- */
+        .reveal { opacity: 0; transform: translateY(60px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        .delay-1 { transition-delay: 0.2s; }
+        .delay-2 { transition-delay: 0.4s; }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; width: 100%; }
+
+        /* --- NAVBAR --- */
+        nav {
+            padding: 15px 0; position: fixed; width: 100%; top: 0; z-index: 100;
+            backdrop-filter: blur(10px); background: rgba(10, 13, 11, 0.85); border-bottom: 1px solid rgba(196, 162, 92, 0.1);
+        }
+        nav .container { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 600; color: var(--gold-accent); text-decoration: none; letter-spacing: 1px; }
+        .logo span { color: var(--celtic-light); }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { color: var(--text-main); text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: color 0.3s; }
+        .nav-links a:hover { color: var(--gold-accent); }
+
+        /* --- HALAMAN SNAP --- */
+        .page-section {
+            min-height: 100vh; 
+            scroll-snap-align: start; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            position: relative; padding-top: 80px; padding-bottom: 30px;
+        }
+
+        /* --- HALAMAN 1: HERO --- */
+        .hero { display: flex; align-items: center; justify-content: space-between; gap: 50px; width: 100%; }
+        .hero-content { flex: 1; }
+        .motto { margin-bottom: 20px; border-left: 3px solid var(--gold-accent); padding-left: 15px; }
+        .motto h2 { font-family: 'Playfair Display', serif; color: var(--gold-accent); font-size: 1.6rem; letter-spacing: 2px; margin-bottom: 5px; }
+        .motto p { font-style: italic; color: var(--text-muted); font-size: 0.95rem; }
+        .hero-content h1 { font-size: 3.2rem; color: #ffffff; margin-bottom: 15px; font-weight: 600; display: flex; align-items: center; gap: 15px; }
+        .clover-icon { font-size: 2.2rem; color: var(--celtic-light); filter: drop-shadow(0 0 10px rgba(32, 92, 59, 0.5)); }
+        .hero-content .desc { font-size: 1rem; color: var(--text-muted); margin-bottom: 25px; max-width: 600px; }
+        .hero-content strong { color: var(--text-main); }
+        .hero-image { width: 250px; height: 250px; border-radius: 50%; overflow: hidden; border: 3px solid var(--gold-accent); box-shadow: 0 0 30px rgba(196, 162, 92, 0.15), inset 0 0 20px rgba(0,0,0,0.5); flex-shrink: 0; }
+        .hero-image img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* --- HALAMAN 2: GAME LEPRECHAUN --- */
+        .section-title { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--gold-accent); margin-bottom: 15px; text-align: center; letter-spacing: 1px; width: 100%; }
+        .section-title::after { content: '☘️'; display: block; font-size: 1.1rem; margin-top: 5px; color: var(--celtic-light); }
+        .game-subtitle { text-align: center; color: var(--text-muted); margin-bottom: 20px; font-size: 0.95rem; }
+        
+        .game-container {
+            width: 100%; max-width: 750px; position: relative;
+            background: #0f1a14; border: 3px solid var(--gold-accent);
+            border-radius: 12px; overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6), inset 0 0 30px rgba(0,0,0,0.8);
+            aspect-ratio: 2 / 1; 
+            cursor: pointer;
+        }
+        #gameCanvas { width: 100%; height: 100%; display: block; touch-action: none; }
+        
+        .game-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.75); display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 2;
+            transition: opacity 0.3s; backdrop-filter: blur(3px);
+        }
+        .game-overlay.hidden { opacity: 0; pointer-events: none; }
+        .game-title { font-family: 'Playfair Display', serif; color: var(--gold-accent); font-size: 2.2rem; margin-bottom: 10px; text-shadow: 0 4px 10px rgba(0,0,0,0.8); }
+        .game-instruction { color: white; font-size: 1.1rem; margin-bottom: 15px; animation: pulseText 1.5s infinite; }
+        .btn-play { background: var(--celtic-light); color: white; border: 2px solid var(--gold-accent); padding: 8px 22px; font-size: 1rem; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: 'Inter', sans-serif; transition: 0.2s; }
+        .btn-play:hover { background: var(--gold-accent); color: var(--bg-dark); }
+        @keyframes pulseText { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        /* --- HALAMAN 3: TOKO / MERCHANDISE --- */
+        .store-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            width: 100%;
+            max-width: 900px;
+            margin-top: 10px;
+        }
+
+        .store-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(196, 162, 92, 0.2);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s, border-color 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .store-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--gold-accent);
+        }
+
+        .store-img-box {
+            height: 180px;
+            background: #14221b;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .store-img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .store-card:hover .store-img-box img {
+            transform: scale(1.05);
+        }
+
+        .store-info {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: space-between;
+        }
+
+        .store-info h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold-accent);
+            font-size: 1.15rem;
+            margin-bottom: 5px;
+        }
+
+        .store-info p {
+            color: var(--text-muted);
+            font-size: 0.82rem;
+            margin-bottom: 12px;
+        }
+
+        /* Pilihan Ukuran (Size) */
+        .size-container {
+            margin-bottom: 12px;
+        }
+
+        .size-container label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--gold-accent);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .size-select {
+            width: 100%;
+            background: #0a0d0b;
+            color: var(--text-main);
+            border: 1px solid rgba(196, 162, 92, 0.3);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .size-select:focus {
+            border-color: var(--gold-accent);
+        }
+
+        .store-price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding-top: 10px;
+        }
+
+        .price {
+            color: #2ecc71;
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+
+        .btn-buy {
+            background-color: var(--celtic-light);
+            color: white;
+            border: 1px solid var(--gold-accent);
+            padding: 6px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+
+        .btn-buy:hover {
+            background-color: var(--gold-accent);
+            color: var(--bg-dark);
+        }
+
+        /* --- HALAMAN 4: CONTACT --- */
+        #contact { background: linear-gradient(to bottom, transparent, rgba(20, 54, 35, 0.3)); border-top: 1px solid rgba(255,255,255,0.05); }
+        .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-top: 25px; width: 100%; }
+        .contact-card { background-color: var(--bg-card); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 25px 20px; text-align: center; text-decoration: none; color: var(--text-main); transition: all 0.3s ease; }
+        .contact-card:hover { transform: translateY(-5px); background-color: #1a221d; border-color: var(--gold-accent); }
+        .contact-icon { font-size: 2.2rem; margin-bottom: 10px; filter: grayscale(20%) sepia(20%) hue-rotate(90deg); }
+        .contact-card h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--gold-accent); margin-bottom: 5px; }
+        .contact-card p { font-size: 0.9rem; color: var(--text-muted); word-break: break-all; }
+        
+        footer { text-align: center; padding: 15px; border-top: 1px solid rgba(255,255,255,0.05); width: 100%; margin-top: 30px; }
+        footer p { color: var(--text-muted); font-size: 0.85rem; }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hero { flex-direction: column-reverse; text-align: center; justify-content: center; }
+            .motto { border-left: none; padding-left: 0; border-bottom: 1px solid var(--gold-accent); padding-bottom: 10px; display: inline-block; margin-bottom: 15px; }
+            .hero-content h1 { justify-content: center; font-size: 2rem; }
+            .hero-image { width: 160px; height: 160px; }
+            .page-section { padding-top: 90px; justify-content: flex-start; }
+            .section-title { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Layar Preloader -->
+    <div id="intro-screen"><div class="intro-clover">☘️</div></div>
+    <!-- Daun Terbang -->
+    <div id="clover-particles"></div>
+
+    <!-- PEMUTAR MUSIK YOUTUBE (LOOPING) -->
+    <div style="display:none;">
+        <iframe id="bgMusic" width="0" height="0" src="https://www.youtube.com/embed/g7Y_gRRphCQ?enablejsapi=1&loop=1&playlist=g7Y_gRRphCQ" title="Celtic Punk BG Music" frameborder="0" allow="autoplay"></iframe>
+    </div>
+
+    <div class="main-wrapper">
+        <nav>
+            <div class="container">
+                <a href="#about" class="logo">Portofolio<span>.</span></a>
+                <div class="nav-links">
+                    <a href="#about">Tentang Saya</a>
+                    <a href="#game-project">Mini Project</a>
+                    <a href="#store">Store Clover</a>
+                    <a href="#contact">Contact</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- HALAMAN 1: TENTANG SAYA -->
+        <section id="about" class="page-section">
+            <div class="container">
+                <header class="hero">
+                    <div class="hero-content reveal">
+                        <div class="motto">
+                            <h2>Fortis Fortuna Adiuvat</h2>
+                            <p>"Keberuntungan berpihak pada mereka yang berani"</p>
+                        </div>
+                        <h1 class="name-title">Andika <span class="clover-icon">☘️</span></h1>
+                        <p class="desc">Saya adalah siswa kelas XI jurusan <strong>Teknik Jaringan Komputer dan Telekomunikasi (TJKT)</strong> di <strong>SMK Ma'arif 1 Nanggulan</strong>. Saya memiliki ketertarikan mendalam pada infrastruktur jaringan, kultur teknologi, dan desain web fungsional.</p>
+                    </div>
+                    <div class="hero-image reveal delay-1">
+                        <img src="https://via.placeholder.com/280x280/1a221d/c4a25c?text=Foto+Menyusul" alt="Foto Andika">
+                    </div>
+                </header>
+            </div>
+        </section>
+
+        <!-- HALAMAN 2: MINI GAME LEPRECHAUN -->
+        <section id="game-project" class="page-section">
+            <div class="container">
+                <h2 class="section-title reveal">Interactive Project</h2>
+                <p class="game-subtitle reveal delay-1">Leprechaun Dash - Ketuk layarnya atau tekan SPASI untuk Melompat!</p>
+                
+                <div class="game-container reveal delay-2" id="gameArea">
+                    <canvas id="gameCanvas" width="800" height="400"></canvas>
+                    
+                    <div id="gameOverlay" class="game-overlay">
+                        <h2 id="overlayTitle" class="game-title">Leprechaun Dash</h2>
+                        <p id="overlayScore" class="game-instruction" style="display: none; color: #2ecc71; font-weight: bold;">Skor Kamu: 0 Koin Jade</p>
+                        <p id="overlayInst" class="game-instruction">Klik/Tap untuk Melompat</p>
+                        <button id="startBtn" class="btn-play">MULAI GAME</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- HALAMAN 3: TOKO / STORE CLOVER -->
+        <section id="store" class="page-section">
+            <div class="container">
+                <h2 class="section-title reveal">Clover Store & Merch</h2>
+                <p class="game-subtitle reveal delay-1">Koleksi eksklusif bertema Clover pilihan Anda.</p>
+                
+                <div class="store-grid reveal delay-2">
+                    <!-- Barang 1: Action Figure Leprechaun -->
+                    <div class="store-card">
+                        <div class="store-img-box">
+                            <img src="https://i.etsystatic.com/63358016/r/il/df82ab/7556930531/il_fullxfull.7556930531_l6vp.jpg" alt="Leprechaun Action Figure">
+                        </div>
+                        <div class="store-info">
+                            <div>
+                                <h3>Leprechaun Hand-Painted Figurine</h3>
+                                <p>Action figure edisi kolektor bertema mistis Irlandia, dicat secara detail.</p>
+                            </div>
+                            <div class="store-price-row">
+                                <span class="price">Rp 250.000</span>
+                                <a href="https://wa.me/6283173706509?text=Halo%20Andika,%20saya%20tertarik%20membeli%20Leprechaun%20Hand-Painted%20Figurine" target="_blank" class="btn-buy">Beli Sekarang</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Barang 2: Converse x Patta Clover Hoodie -->
+                    <div class="store-card">
+                        <div class="store-img-box">
+                            <img src="https://www.converse.com/dw/image/v2/BCZC_PRD/on/demandware.static/-/Sites-cnv-master-catalog/default/dwe619a433/images/b_08/10024664-A01_B_08X1.jpg?sw=406&strip=false" alt="Converse x Patta Clover Hoodie">
+                        </div>
+                        <div class="store-info">
+                            <div>
+                                <h3>Converse x Patta Clover Hoodie</h3>
+                                <p>Utility fleece hoodie premium kolaborasi spesial bertema four-leaf clover.</p>
+                                
+                                <div class="size-container">
+                                    <label for="size-hoodie">Pilih Ukuran:</label>
+                                    <select id="size-hoodie" class="size-select">
+                                        <option value="10 Junior">10 Junior</option>
+                                        <option value="12 Junior">12 Junior</option>
+                                        <option value="14 Junior">14 Junior</option>
+                                        <option value="10 Adult">10 Adult</option>
+                                        <option value="12 Adult">12 Adult</option>
+                                        <option value="14 Adult">14 Adult</option>
+                                        <option value="S">S</option>
+                                        <option value="M">M</option>
+                                        <option value="L">L</option>
+                                        <option value="XL">XL</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="store-price-row">
+                                <span class="price">Rp 690.000</span>
+                                <button onclick="beliHoodie()" class="btn-buy">Beli Sekarang</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Barang 3: Nike SB Dunk Low Pro "St. Patrick's Day" -->
+                    <div class="store-card">
+                        <div class="store-img-box">
+                            <img src="https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//89/MTA-50344503/nike_nike_sb_dunk_low_pro_st-_patrick-s_day_--_shamrock_green_lucky_celtics_full01_b5dqekhl.jpg" alt="Nike SB Dunk St. Patrick's Day">
+                        </div>
+                        <div class="store-info">
+                            <div>
+                                <h3>Nike SB Dunk Low "St. Patrick's Day"</h3>
+                                <p>Sneakers edisi khusus Shamrock Green dengan bordir daun semanggi emas di bagian tumit.</p>
+                                
+                                <div class="size-container">
+                                    <label for="size-sepatu">Pilih Ukuran Sepatu:</label>
+                                    <select id="size-sepatu" class="size-select">
+                                        <option value="39">Size 39</option>
+                                        <option value="40">Size 40</option>
+                                        <option value="41">Size 41</option>
+                                        <option value="42">Size 42</option>
+                                        <option value="43">Size 43</option>
+                                        <option value="44">Size 44</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="store-price-row">
+                                <span class="price">Rp 1.850.000</span>
+                                <button onclick="beliSepatu()" class="btn-buy">Beli Sekarang</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- HALAMAN 4: CONTACT -->
+        <section id="contact" class="page-section">
+            <div class="container">
+                <h2 class="section-title reveal">Contact Saya</h2>
+                <p class="reveal" style="text-align: center; color: var(--text-muted); max-width: 600px; margin: 0 auto; font-size: 0.9rem;">
+                    Tertarik berdiskusi seputar <i>networking</i>, web development, atau pemesanan merchandise? Hubungi kontak di bawah ini.
+                </p>
+                <div class="contact-grid reveal delay-1">
+                    <a href="https://wa.me/6283173706509" target="_blank" class="contact-card">
+                        <div class="contact-icon">📱</div><h3>WhatsApp</h3><p>0831-7370-6509</p>
+                    </a>
+                    <a href="mailto:Dikasipemberani@gmail.com" class="contact-card">
+                        <div class="contact-icon">✉️</div><h3>Email</h3><p>Dikasipemberani@gmail.com</p>
+                    </a>
+                    <a href="https://www.instagram.com/dika189_?srtk=cHRsYjF0NDQ1cXVk" target="_blank" class="contact-card">
+                        <div class="contact-icon">📸</div><h3>Instagram</h3><p>@dika189_</p>
+                    </a>
+                </div>
+            </div>
+            <footer class="reveal delay-2"><p>&copy; 2026 Andika ☘️ Portofolio Siswa TJKT SMK Ma'arif 1 Nanggulan.</p></footer>
+        </section>
+    </div>
+
+    <script>
+        // --- FUNGSI BELI BARANG DENGAN PILIHAN UKURAN ---
+        function beliHoodie() {
+            const selectSize = document.getElementById('size-hoodie').value;
+            const pesan = `Halo Andika, saya tertarik membeli Converse x Patta Clover Hoodie dengan ukuran (Size): *${selectSize}*.`;
+            const urlWhatsApp = `https://wa.me/6283173706509?text=${encodeURIComponent(pesan)}`;
+            window.open(urlWhatsApp, '_blank');
+        }
+
+        function beliSepatu() {
+            const selectSize = document.getElementById('size-sepatu').value;
+            const pesan = `Halo Andika, saya tertarik membeli Nike SB Dunk Low St. Patrick's Day dengan ukuran (Size): *${selectSize}*.`;
+            const urlWhatsApp = `https://wa.me/6283173706509?text=${encodeURIComponent(pesan)}`;
+            window.open(urlWhatsApp, '_blank');
+        }
+
+        // --- PRELOADER & BACKGROUND ANIMATION ---
+        window.addEventListener('load', () => {
+            document.documentElement.style.overflow = 'hidden'; 
+            setTimeout(() => {
+                document.getElementById('intro-screen').classList.add('intro-hidden');
+                setTimeout(() => { document.documentElement.style.overflow = ''; }, 1200); 
+            }, 2000); 
+        });
+
+        function createFlyingLeaf() {
+            const container = document.getElementById('clover-particles');
+            const leaf = document.createElement('div');
+            leaf.classList.add('flying-leaf'); leaf.innerText = '☘️';
+            leaf.style.left = Math.random() * 100 + 'vw';
+            const fallDuration = Math.random() * 4 + 5; 
+            leaf.style.animationDuration = fallDuration + 's';
+            leaf.style.transform = `scale(${Math.random() * 0.8 + 0.5})`;
+            container.appendChild(leaf);
+            setTimeout(() => { leaf.remove(); }, fallDuration * 1000);
+        }
+        setInterval(createFlyingLeaf, 1500);
+
+        // --- SCROLL REVEAL ---
+        document.addEventListener("DOMContentLoaded", function() {
+            const reveals = document.querySelectorAll(".reveal");
+            const revealOnScroll = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) { entry.target.classList.add("active"); } 
+                    else { entry.target.classList.remove("active"); }
+                });
+            }, { threshold: 0.2 });
+            reveals.forEach(reveal => revealOnScroll.observe(reveal));
+        });
+
+        // ==========================================
+        // LOGIKA MINI GAME LEPRECHAUN DASH + MUSIK
+        // ==========================================
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const overlay = document.getElementById('gameOverlay');
+        const startBtn = document.getElementById('startBtn');
+        const overlayTitle = document.getElementById('overlayTitle');
+        const overlayScore = document.getElementById('overlayScore');
+        const overlayInst = document.getElementById('overlayInst');
+        const gameArea = document.getElementById('gameArea');
+
+        let isPlaying = false;
+        let score = 0;
+        let frameCount = 0;
+        let gameSpeed = 5;
+        let animationId;
+
+        const player = {
+            x: 50, y: 200, width: 40, height: 40,
+            dy: 0, gravity: 0.6, jumpPower: -11.5,
+            grounded: false
+        };
+
+        let obstacles = [];
+        let coins = [];
+        const groundY = 320;
+
+        function resetGame() {
+            player.y = groundY - player.height;
+            player.dy = 0;
+            obstacles = [];
+            coins = [];
+            score = 0;
+            frameCount = 0;
+            gameSpeed = 5.5;
+        }
+
+        function drawBackground() {
+            ctx.fillStyle = "#0a0d0b";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#143623";
+            ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
+            ctx.fillStyle = "#c4a25c";
+            ctx.fillRect(0, groundY, canvas.width, 3);
+        }
+
+        function drawPlayer() {
+            ctx.save();
+            ctx.translate(player.x, player.y);
+            let jumpOffset = player.grounded ? 0 : -5;
+            
+            ctx.fillStyle = "#1e7a44";
+            ctx.fillRect(10, 15, 20, 15);
+            
+            ctx.fillStyle = "#111";
+            ctx.fillRect(10, 22, 20, 4);
+            ctx.fillStyle = "#f1c40f"; 
+            ctx.fillRect(17, 21, 6, 6);
+            ctx.fillStyle = "#111";
+            ctx.fillRect(19, 23, 2, 2);
+            
+            ctx.fillStyle = "#f3cb9c"; 
+            ctx.beginPath();
+            ctx.arc(20, 10 + jumpOffset, 9, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = "#d35400";
+            ctx.beginPath();
+            ctx.arc(20, 12 + jumpOffset, 10, 0, Math.PI, false);
+            ctx.fill();
+
+            ctx.fillStyle = "#111";
+            ctx.beginPath();
+            ctx.arc(24, 8 + jumpOffset, 1.5, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = "#143623";
+            ctx.fillRect(12, -6 + jumpOffset, 16, 12); 
+            ctx.fillRect(6, 6 + jumpOffset, 28, 3); 
+            
+            ctx.fillStyle = "#333";
+            if (player.grounded) {
+                if (Math.floor(frameCount / 8) % 2 === 0) {
+                    ctx.fillRect(12, 30, 5, 10);
+                    ctx.fillRect(23, 30, 5, 10);
+                } else {
+                    ctx.fillRect(10, 30, 6, 7);
+                    ctx.fillRect(25, 30, 6, 7);
+                }
+            } else {
+                ctx.fillRect(10, 30, 8, 5);
+                ctx.fillRect(22, 30, 8, 5);
+            }
+            ctx.restore();
+        }
+
+        function drawObstacles() {
+            ctx.font = "35px Arial";
+            obstacles.forEach(obs => {
+                obs.x -= gameSpeed;
+                ctx.fillText('🪨', obs.x + obs.width/2 - 17, obs.y + obs.height/2 + 12);
+            });
+            obstacles = obstacles.filter(obs => obs.x + obs.width > 0);
+        }
+
+        function drawCoins() {
+            coins.forEach(coin => {
+                coin.x -= gameSpeed;
+                ctx.save();
+                ctx.translate(coin.x + coin.width/2, coin.y + coin.height/2);
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = "#2ecc71";
+                ctx.beginPath();
+                ctx.arc(0, 0, coin.width/2, 0, Math.PI * 2);
+                ctx.fillStyle = "#27ae60"; 
+                ctx.fill();
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = "#2ecc71"; 
+                ctx.stroke();
+                ctx.shadowBlur = 0; 
+                ctx.beginPath();
+                ctx.rect(-4, -4, 8, 8);
+                ctx.fillStyle = "#0a0d0b"; 
+                ctx.fill();
+                ctx.restore();
+            });
+            coins = coins.filter(coin => coin.x + coin.width > 0);
+        }
+
+        function drawScore() {
+            ctx.fillStyle = "#2ecc71";
+            ctx.font = "bold 24px 'Inter', sans-serif";
+            ctx.textAlign = "left";
+            ctx.fillText(`Jade: ${score}`, 20, 40);
+        }
+
+        function spawnEntities() {
+            frameCount++;
+            if (frameCount % 95 === 0) {
+                obstacles.push({ x: canvas.width, y: groundY - 30, width: 30, height: 30 });
+            }
+            if (frameCount % 120 === 0) {
+                let coinY = groundY - 50 - Math.random() * 80; 
+                coins.push({ x: canvas.width, y: coinY, width: 25, height: 25 });
+            }
+            if (frameCount % 400 === 0) { gameSpeed += 0.5; }
+        }
+
+        function checkCollision() {
+            const pBox = { x: player.x + 10, y: player.y + 10, w: player.width - 20, h: player.height - 10 };
+            
+            for (let obs of obstacles) {
+                const oBox = { x: obs.x + 5, y: obs.y + 5, w: obs.width - 10, h: obs.height - 10 };
+                if (pBox.x < oBox.x + oBox.w && pBox.x + pBox.w > oBox.x &&
+                    pBox.y < oBox.y + oBox.h && pBox.y + pBox.h > oBox.y) {
+                    gameOver();
+                    return;
+                }
+            }
+
+            for (let i = 0; i < coins.length; i++) {
+                let coin = coins[i];
+                const cBox = { x: coin.x, y: coin.y, w: coin.width, h: coin.height };
+                if (pBox.x < cBox.x + cBox.w && pBox.x + pBox.w > cBox.x &&
+                    pBox.y < cBox.y + cBox.h && pBox.y + pBox.h > cBox.y) {
+                    score++;
+                    coins.splice(i, 1); 
+                    i--;
+                }
+            }
+        }
+
+        function updatePlayer() {
+            player.dy += player.gravity;
+            player.y += player.dy;
+
+            if (player.y + player.height > groundY) {
+                player.y = groundY - player.height;
+                player.dy = 0;
+                player.grounded = true;
+            } else {
+                player.grounded = false;
+            }
+        }
+
+        function jump(e) {
+            if (e) e.preventDefault();
+            if (isPlaying && player.grounded) {
+                player.dy = player.jumpPower;
+                player.grounded = false;
+            }
+        }
+
+        function gameLoop() {
+            if (!isPlaying) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            drawBackground();
+            spawnEntities();
+            updatePlayer();
+            drawObstacles();
+            drawCoins();
+            drawPlayer();
+            checkCollision();
+            drawScore();
+
+            if (isPlaying) {
+                animationId = requestAnimationFrame(gameLoop);
+            }
+        }
+
+        function startGame() {
+            resetGame();
+            overlay.classList.add('hidden');
+            isPlaying = true;
+            
+            const iframe = document.getElementById('bgMusic');
+            iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+
+            gameLoop();
+        }
+
+        function gameOver() {
+            isPlaying = false;
+            cancelAnimationFrame(animationId);
+            
+            overlayTitle.innerText = "Yahh Tertabrak! 💥";
+            overlayScore.innerText = `Skor Akhir: ${score} Koin Jade`;
+            overlayScore.style.display = "block";
+            overlayInst.innerText = "";
+            startBtn.innerText = "MAIN LAGI";
+            
+            overlay.classList.remove('hidden');
+        }
+
+        startBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); 
+            startGame();
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                if (isPlaying) {
+                    e.preventDefault(); 
+                    jump();
+                }
+            }
+        });
+
+        gameArea.addEventListener('mousedown', jump);
+        gameArea.addEventListener('touchstart', jump, {passive: false});
+
+        drawBackground();
+    </script>
+</body>
+</html>
